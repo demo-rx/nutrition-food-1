@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>اشتراک ماهانه | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/platform.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="bmi-like">
+      <a href="index.html" class="back">بازگشت</a>
+      <h1>اشتراک ماهانه</h1>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <main class="pad">
+      <div class="price-card">
+        <p id="pay-lead">۳۰ روز دسترسی کامل به پلنر، گزارش و اسکن هوشمند</p>
+        <strong>۹۹٬۰۰۰ تومان / ماه</strong>
+        <p class="note" id="pay-note">درگاه واقعی بعداً وصل می‌شود. الان فعال‌سازی آزمایشی است.</p>
+        <button type="button" class="btn btn-primary" id="pay">خرید و پرداخت</button>
+        <p id="err" class="error-message" hidden></p>
+      </div>
+      <div class="ad-slot" data-slot="plan-banner"></div>
+    </main>
+  </div>
+  <script src="js/i18n.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/ads.js"></script>
+  <script>
+    const next = new URLSearchParams(location.search).get('next') || '';
+    const buyingCoach = next.includes('coach.html');
+    if (!HNP.isLoggedIn()) {
+      location.href = 'login.html?next=' + encodeURIComponent(location.pathname + location.search);
+    }
+    if (buyingCoach) {
+      document.querySelector('h1').textContent = 'خرید رژیم مربی';
+      document.getElementById('pay-lead').textContent = 'با این پرداخت فایل رژیم مربی برای حساب تو باز می‌شود. برنامهٔ غذایی خودبه‌خود عوض نمی‌شود.';
+      document.getElementById('pay').textContent = 'پرداخت ۹۹٬۰۰۰ تومان و دریافت رژیم';
+    }
+    document.getElementById('pay').addEventListener('click', async () => {
+      const err = document.getElementById('err');
+      err.hidden = true;
+      try {
+        await HNP.upgradePremium();
+        const dest = next || 'plan.html';
+        location.href = buyingCoach ? dest + (dest.includes('?') ? '&' : '?') + 'bought=1' : dest;
+      } catch (e) {
+        err.hidden = false;
+        err.textContent = e.message;
+      }
+    });
+  </script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>پیش‌نمایش ورود | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/login-preview.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell login-preview">
+    <p class="preview-banner">این فقط پیش‌نمایش است. هنوز ورود واقعی عوض نشده.</p>
+    <header class="login-top">
+      <a href="index.html" class="login-back" aria-label="بازگشت">‹</a>
+    </header>
+    <main class="login-main">
+      <img class="login-logo" src="/assets/logo.svg" alt="">
+      <h1>ورود به حساب</h1>
+      <p class="login-sub">ایمیل و رمز خودت را بزن</p>
+      <section class="login-card">
+        <div class="login-tabs" role="tablist">
+          <button type="button" class="on" data-tab="in" role="tab" aria-selected="true">ورود</button>
+          <button type="button" data-tab="up" role="tab" aria-selected="false">ثبت‌نام</button>
+        </div>
+        <label class="login-field" data-name hidden>نام
+          <span><b>☺</b><input type="text" placeholder="مثلاً علی" autocomplete="name"></span>
+        </label>
+        <label class="login-field">ایمیل
+          <span><b>✉</b><input type="email" dir="ltr" placeholder="you@email.com" autocomplete="username"></span>
+        </label>
+        <label class="login-field">رمز
+          <span>
+            <b>🔒</b>
+            <input type="password" dir="ltr" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="login-eye" aria-label="نمایش رمز">👁</button>
+          </span>
+        </label>
+        <button type="button" class="btn btn-primary" id="preview-go">ورود</button>
+        <p class="login-hint" id="preview-hint">حساب نداری؟ زبانهٔ ثبت‌نام را بزن.</p>
+      </section>
+    </main>
+  </div>
+  <script>
+    const tabs = document.querySelectorAll('.login-tabs button');
+    const nameField = document.querySelector('[data-name]');
+    const go = document.getElementById('preview-go');
+    const hint = document.getElementById('preview-hint');
+    const pass = document.querySelector('input[type="password"], input[autocomplete="current-password"]');
+    tabs.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        tabs.forEach((item) => {
+          item.classList.toggle('on', item === btn);
+          item.setAttribute('aria-selected', item === btn ? 'true' : 'false');
+        });
+        const signup = btn.dataset.tab === 'up';
+        nameField.hidden = !signup;
+        go.textContent = signup ? 'ساخت حساب' : 'ورود';
+        hint.textContent = signup ? 'با ایمیل خودت حساب ورزشکار می‌سازی.' : 'حساب نداری؟ زبانهٔ ثبت‌نام را بزن.';
+      });
+    });
+    document.querySelector('.login-eye').addEventListener('click', () => {
+      const field = document.querySelector('.login-field:last-of-type input');
+      field.type = field.type === 'password' ? 'text' : 'password';
+    });
+  </script>
+</body>
+</html>

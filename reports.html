@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>گزارش تغذیه | Healthy Nutrition Plan</title>
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Outfit:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/plan.css">
+</head>
+<body data-title-key="html.title.reports">
+  <div class="app-shell">
+    <header class="plan-header">
+      <a href="index.html" class="back-btn" data-i18n-aria="scan.back">←</a>
+      <div class="header-title">
+        <span class="fa-text" data-i18n="rep.title">گزارش تغذیه</span>
+      </div>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <div id="lang-switch"></div>
+    <main class="plan-main">
+      <section class="view active">
+        <div class="tabs report-tabs">
+          <button type="button" class="tab active" data-period="week" data-i18n="rep.week">هفته</button>
+          <button type="button" class="tab" data-period="month" data-i18n="rep.month">ماه</button>
+          <button type="button" class="tab" data-period="six" data-i18n="rep.six">۶ ماه</button>
+          <button type="button" class="tab" data-period="year" data-i18n="rep.year">سال</button>
+        </div>
+
+        <div class="card" id="health-card"></div>
+
+        <div class="card">
+          <label class="field">
+            <span class="fa-text" data-i18n="rep.target">هدف کالری روزانه پلن</span>
+            <input type="number" id="cal-target" min="1000" max="5000" step="50" dir="ltr">
+          </label>
+          <p class="auth-note fa-text" data-i18n="rep.targetHint">با این عدد مشخص می‌شود طبق پلن چقدر باید کم می‌کردی (هر ۷۷۰۰ کالری ≈ ۱ کیلو).</p>
+        </div>
+
+        <div class="card" id="report-summary"></div>
+
+        <div class="card">
+          <h3 class="fa-text" data-i18n="rep.chartCal">نمودار کالری</h3>
+          <canvas id="chart-cal" width="360" height="180"></canvas>
+        </div>
+        <div class="card">
+          <h3 class="fa-text" data-i18n="rep.chartSugar">نمودار قند</h3>
+          <canvas id="chart-sugar" width="360" height="180"></canvas>
+        </div>
+        <div class="card">
+          <h3 class="fa-text" data-i18n="rep.chartFat">نمودار چربی</h3>
+          <canvas id="chart-fat" width="360" height="180"></canvas>
+        </div>
+
+        <div class="card" id="burn-card">
+          <h3 class="fa-text" data-i18n="rep.burnTitle">نمودار فاصله از برنامه</h3>
+          <p class="auth-note fa-text" data-i18n="rep.burnHint">خط چین مسیر ایده‌آل برنامه است. خط رنگی باقی‌ماندهٔ وعده‌هایی است که هنوز رعایت نشده؛ از شروع ماه تا آخر ماه، دو هفته‌دو هفته تا ماه کامل شود.</p>
+          <p class="auth-note" id="burn-caption"></p>
+          <div class="burn-legend">
+            <span><i class="burn-ideal"></i> مسیر برنامه</span>
+            <span><i class="burn-actual"></i> باقی‌ماندهٔ تو</span>
+          </div>
+          <canvas id="chart-burn" width="360" height="200"></canvas>
+        </div>
+
+        <div class="card" id="compliance-card"></div>
+
+        <div class="card">
+          <h3 class="fa-text" data-i18n="rep.mealsTitle">چی خوردی</h3>
+          <div id="meal-list"></div>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="btn-copy" data-i18n="rep.copy">کپی گزارش برای مربی</button>
+        <button type="button" class="btn btn-secondary" id="btn-print" data-i18n="rep.print">چاپ / ذخیره PDF</button>
+        <a href="scan.html" class="btn btn-secondary" data-i18n="home.start">اسکن غذا</a>
+      </section>
+    </main>
+  </div>
+  <script src="js/i18n.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/gate.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

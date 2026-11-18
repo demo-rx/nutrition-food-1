@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>مربیان | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/platform.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="bmi-like">
+      <a href="index.html" class="back">بازگشت</a>
+      <h1>مربیان</h1>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <main class="pad">
+      <div class="ad-slot" data-slot="home-banner"></div>
+      <div id="list"></div>
+    </main>
+  </div>
+  <script src="js/ads.js"></script>
+  <script>
+    fetch('/api/coaches').then((r) => r.json()).then((data) => {
+      document.getElementById('list').innerHTML = (data.coaches || []).map((c) => `
+        <a class="coach-card" href="coach.html?id=${encodeURIComponent(c.id)}">
+          <img class="coach-photo" src="${c.photo || ''}" alt="">
+          <span class="coach-copy">
+            <strong>${c.name}</strong>
+            <span class="coach-rate">★ ${c.rating || '—'}</span>
+            <span>${c.specialty || c.title}</span>
+            <em>${c.athleteCount} ورزشکار الان از رژیم غذایی این مربی استفاده می‌کنند</em>
+          </span>
+        </a>
+      `).join('');
+    });
+  </script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

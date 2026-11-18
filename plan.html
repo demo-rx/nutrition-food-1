@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>پلنر غذایی | Healthy Nutrition Plan</title>
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Outfit:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/plan.css">
+  <link rel="stylesheet" href="css/platform.css">
+</head>
+<body data-title-key="html.title.plan">
+  <div class="app-shell">
+    <header class="plan-header">
+      <div class="user-head">
+        <a href="profile.html" class="user-logo-link" aria-label="پروفایل">
+          <img class="home-logo" src="/assets/logo-home.svg" alt="" width="92" height="40">
+        </a>
+        <div class="user-meta">
+          <p class="user-name"><a href="profile.html" id="user-name">مهمان</a></p>
+          <p class="user-sub" id="user-sub">برنامه غذایی</p>
+        </div>
+      </div>
+      <div class="plan-head-tools">
+        <div id="lang-switch"></div>
+        <a href="index.html" class="back-btn" data-i18n-aria="scan.back" aria-label="بازگشت">←</a>
+      </div>
+    </header>
+
+    <main class="plan-main">
+      <div class="ad-slot ad-slot-top" data-slot="plan-banner"></div>
+      <section id="view-auth" class="view">
+        <div class="card">
+          <h2 class="fa-text" data-i18n="auth.title">ورود / ساخت حساب</h2>
+          <span class="en-sub">Log in or create account</span>
+          <p class="auth-note fa-text" data-i18n="auth.note">فعلاً بدون دیتابیس است. حساب روی همین گوشی ذخیره می‌شود.</p>
+          <label class="field">
+            <span class="fa-text" data-i18n="auth.email">ایمیل</span>
+            <input type="email" id="auth-email" autocomplete="username" dir="ltr">
+          </label>
+          <label class="field">
+            <span class="fa-text" data-i18n="auth.pass">رمز</span>
+            <input type="password" id="auth-password" autocomplete="current-password" dir="ltr">
+          </label>
+          <button type="button" class="btn btn-primary" id="btn-auth">
+            <span class="fa-text" data-i18n="auth.go">ادامه</span>
+          </button>
+          <p id="auth-error" class="error-message" hidden></p>
+        </div>
+      </section>
+
+      <section id="view-paywall" class="view">
+        <div class="card">
+          <h2 class="fa-text" data-i18n="pay.title">پریمیوم</h2>
+          <span class="lock-badge" data-i18n="pay.lock">قفل</span>
+          <p class="fa-text" data-i18n="pay.body">برای استفاده از پلنر باید اشتراک ماهانه بخری. هر حساب روی موبایل داده خودش را دارد.</p>
+          <span class="en-sub">Monthly subscription unlocks the planner. Each account keeps its own data.</span>
+          <button type="button" class="btn btn-primary" id="btn-upgrade">
+            <span class="fa-text" data-i18n="pay.unlock">خرید اشتراک ماهانه</span>
+            <span class="en-sub">Subscribe monthly</span>
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-logout-pw" data-i18n="pay.logout">خروج</button>
+        </div>
+      </section>
+
+      <section id="view-app" class="view">
+        <div class="card" id="owned-plans" hidden>
+          <h3>فایل‌های رژیم من</h3>
+          <div id="owned-list"></div>
+        </div>
+        <div class="card" id="upload">
+          <input type="file" id="plan-photo" accept="image/*,.pdf,application/pdf,.txt,text/plain" hidden>
+          <button type="button" class="btn btn-primary" id="btn-plan-photo" data-i18n="photo.pick">بارگذاری عکس یا PDF</button>
+          <p id="plan-photo-status" class="auth-note" hidden></p>
+        </div>
+
+        <div class="tabs">
+          <button type="button" class="tab active" data-tab="planner" data-i18n="tab.planner">پلنر</button>
+          <button type="button" class="tab" data-tab="facts" data-i18n="tab.facts">ارزش غذایی</button>
+        </div>
+
+        <div id="tab-planner" class="tab-panel">
+          <div class="range-switch">
+            <button type="button" class="tab active" id="btn-day" data-i18n="range.day">روز</button>
+            <button type="button" class="tab" id="btn-month" data-i18n="range.month">ماه</button>
+          </div>
+
+          <div class="card">
+            <div class="day-nav">
+              <button type="button" id="btn-prev">‹</button>
+              <div class="day-label" id="day-label"></div>
+              <button type="button" id="btn-next">›</button>
+            </div>
+            <p class="en-sub" id="day-totals"></p>
+            <div id="limit-alarm" class="limit-alarm" hidden></div>
+            <div id="today-plan" class="today-plan" hidden></div>
+            <div id="week-strip" class="week-strip"></div>
+            <div id="month-wrap" hidden>
+              <div class="month-grid" id="month-grid"></div>
+            </div>
+            <div id="day-slots"></div>
+          </div>
+
+          <details class="card manual-card">
+            <summary class="manual-toggle" data-i18n="manual.title">ثبت دستی</summary>
+            <label class="field">
+              <span class="fa-text" data-i18n="manual.slot">وعده</span>
+              <select id="manual-slot">
+                <option value="breakfast" data-i18n="slot.breakfast">صبحانه</option>
+                <option value="snackAm" data-i18n="slot.snackAm">میان‌وعده ۱</option>
+                <option value="lunch" data-i18n="slot.lunch">ناهار</option>
+                <option value="snackPm" data-i18n="slot.snackPm">میان‌وعده ۲</option>
+                <option value="dinner" data-i18n="slot.dinner">شام</option>
+                <option value="snackNight" data-i18n="slot.snackNight">قبل خواب</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="fa-text" data-i18n="manual.what">چی خوردی؟</span>
+              <div class="lookup">
+                <input type="text" id="manual-name" placeholder="چی خوردی؟" autocomplete="off">
+                <div id="food-suggest" class="lookup-menu" hidden></div>
+              </div>
+            </label>
+            <div class="amount-row">
+              <label class="field">
+                <span class="fa-text" data-i18n="manual.amount">مقدار</span>
+                <input type="text" id="manual-grams" inputmode="decimal" dir="ltr" placeholder="مثلاً 2">
+              </label>
+              <label class="field">
+                <span class="fa-text" data-i18n="manual.unit">واحد مربی</span>
+                <select id="manual-unit">
+                  <option value="g">گرم</option>
+                  <option value="tbsp">قاشق غذاخوری</option>
+                  <option value="tsp">قاشق مرباخوری</option>
+                  <option value="piece">عدد</option>
+                  <option value="cup">لیوان</option>
+                  <option value="halfCup">نصف لیوان</option>
+                  <option value="scoop">اسکوپ</option>
+                  <option value="halfScoop">نصف اسکوپ</option>
+                  <option value="matchbox">قوطی کبریت</option>
+                  <option value="palm">کف دست</option>
+                </select>
+              </label>
+            </div>
+            <p class="auth-note fa-text" data-i18n="manual.autoHint">واحد را مثل برنامه مربی انتخاب کن. کالری و قند خودکار است و می‌توانی عوض کنی.</p>
+            <label class="field">
+              <span class="fa-text" data-i18n="manual.cal">کالری (قابل تغییر)</span>
+              <input type="text" id="manual-cal" inputmode="numeric" dir="ltr" placeholder="خودکار">
+            </label>
+            <label class="field">
+              <span class="fa-text" data-i18n="manual.sugar">قند گرم (قابل تغییر)</span>
+              <input type="text" id="manual-sugar" inputmode="decimal" dir="ltr" placeholder="خودکار">
+            </label>
+            <button type="button" class="btn btn-primary" id="btn-manual" data-i18n="manual.save">ثبت در این روز</button>
+          </details>
+        </div>
+
+        <div id="tab-facts" class="tab-panel" hidden>
+          <div class="facts-label" id="facts-box">
+            <h3 class="facts-title">
+              <span class="fa-text" data-i18n="facts.title">جدول ارزش غذایی</span>
+              <span class="en-sub" id="facts-day-label"></span>
+            </h3>
+            <p id="facts-empty" class="auth-note" data-i18n="facts.empty">برای این روز هنوز وعده‌ای ثبت نشده.</p>
+            <div id="facts-body" hidden></div>
+          </div>
+        </div>
+
+        <a href="reports.html" class="btn btn-secondary" data-i18n="home.reports">گزارش هفتگی و سالانه</a>
+        <button type="button" class="btn btn-secondary" id="btn-logout" data-i18n="logout">خروج از حساب</button>
+      </section>
+
+      <p id="toast" class="toast" hidden></p>
+    </main>
+  </div>
+  <script src="js/i18n.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/ads.js"></script>
+  <script src="js/plan.js"></script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

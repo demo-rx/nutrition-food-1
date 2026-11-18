@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>پروفایل ورزشکار | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/platform.css">
+  <link rel="stylesheet" href="css/profile.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="profile-body">
+  <div class="app-shell">
+    <header class="pf-bar">
+      <a href="index.html" class="pf-back">بازگشت</a>
+      <span>پروفایل</span>
+      <span class="pf-spacer" aria-hidden="true"></span>
+    </header>
+
+    <main class="profile-page">
+      <section class="pf-head">
+        <div class="pf-identity">
+          <img class="pf-logo" src="/assets/logo-home.svg" alt="" width="92" height="40">
+          <div class="pf-avatar" id="avatar">؟</div>
+          <div class="pf-id-text">
+            <h2 id="hero-name">ورزشکار</h2>
+            <p id="hero-sub">رشته‌ات را بنویس</p>
+          </div>
+        </div>
+        <div class="pf-stats">
+          <div><b id="stat-age">—</b><span>سن</span></div>
+          <div><b id="stat-bmi">—</b><span>BMI</span></div>
+          <div><b id="stat-pct">—</b><span>تا هدف</span></div>
+        </div>
+      </section>
+
+      <a class="pf-sub" id="sub-card" href="subscribe.html">
+        <div>
+          <small>اشتراک ماهانه</small>
+          <strong id="sub-title">در حال بررسی</strong>
+          <span id="sub-detail"></span>
+        </div>
+        <span class="pf-sub-go" id="sub-action">خرید</span>
+      </a>
+
+      <section class="profile-card">
+        <h3>مشخصات</h3>
+        <div class="profile-grid">
+          <label>نام<input id="firstName" type="text" autocomplete="given-name"></label>
+          <label>نام خانوادگی<input id="lastName" type="text" autocomplete="family-name"></label>
+          <label>تاریخ تولد<input id="birthDate" type="date"></label>
+          <label>جنسیت
+            <select id="gender">
+              <option value="">انتخاب کن</option>
+              <option value="female">زن</option>
+              <option value="male">مرد</option>
+            </select>
+          </label>
+          <label>تأهل
+            <select id="marital">
+              <option value="">انتخاب کن</option>
+              <option value="single">مجرد</option>
+              <option value="married">متأهل</option>
+            </select>
+          </label>
+          <label>شهر<input id="city" type="text"></label>
+          <label class="profile-wide">رشته ورزشی<input id="sport" type="text" placeholder="بدنسازی، دو، یوگا…"></label>
+        </div>
+      </section>
+
+      <section class="profile-card">
+        <h3>BMI الان</h3>
+        <div class="profile-grid">
+          <label>قد (سانتی‌متر)<input id="heightCm" type="text" inputmode="decimal" placeholder="165"></label>
+          <label>وزن فعلی (کیلو)<input id="weightKg" type="text" inputmode="decimal" placeholder="68"></label>
+        </div>
+        <div class="bmi-board" id="bmi-board">
+          <strong class="bmi-value" id="bmi-num">—</strong>
+          <div class="bmi-line" id="bmi-line" dir="ltr">
+            <div class="bmi-line-bar">
+              <i class="seg under"></i>
+              <i class="seg normal"></i>
+              <i class="seg over"></i>
+              <i class="seg obese"></i>
+              <span class="bmi-pin" id="bmi-pin" hidden></span>
+            </div>
+            <div class="bmi-line-nums">
+              <span>&lt;18.5</span>
+              <span>18.5–24.9</span>
+              <span>25–29.9</span>
+              <span>≥30</span>
+            </div>
+            <div class="bmi-line-labs">
+              <span>کم‌وزن</span>
+              <span>سالم</span>
+              <span>اضافه‌وزن</span>
+              <span>چاق</span>
+            </div>
+          </div>
+          <b id="bmi-cat">قد و وزن را بزن</b>
+          <small id="bmi-tip">BMI از روی قد و وزن فعلی حساب می‌شود</small>
+        </div>
+      </section>
+
+      <section class="profile-card">
+        <h3>هدفی که می‌خواهم برسم</h3>
+        <div class="profile-grid">
+          <label>نوع هدف
+            <select id="goal">
+              <option value="">انتخاب کن</option>
+              <option value="lose">کاهش وزن</option>
+              <option value="gain">افزایش حجم</option>
+              <option value="fit">تناسب اندام</option>
+              <option value="perf">عملکرد ورزشی</option>
+            </select>
+          </label>
+          <label>وزن هدف (کیلو)<input id="targetWeight" type="text" inputmode="decimal"></label>
+          <label class="profile-wide">این هدف برایم یعنی<textarea id="goalNote" rows="2" placeholder="مثلاً لباس دلخواهم را بپوشم / رکورد بزنم"></textarea></label>
+        </div>
+      </section>
+
+      <section class="profile-card">
+        <h3>راهی که رفته‌ام و الان کجا هستم</h3>
+        <div class="profile-grid">
+          <label>وزن شروع<input id="startWeight" type="text" inputmode="decimal"></label>
+          <label>تاریخ شروع<input id="startDate" type="date"></label>
+          <label class="profile-wide">تا اینجا چه شده؟<textarea id="progressNote" rows="2" placeholder="مثلاً ۳ کیلو کم کردم، انرژی‌ام بهتر شده"></textarea></label>
+        </div>
+        <div class="chart-wrap">
+          <svg class="goal-chart" id="goal-chart" viewBox="0 0 320 200" role="img" aria-label="نمودار مسیر وزن"></svg>
+        </div>
+        <p class="note" id="j-text">وزن شروع، فعلی و هدف را بزن تا نمودار مسیرت دیده شود.</p>
+      </section>
+
+      <section class="profile-card">
+        <h3>موسیقی‌های دلخواه برای تمرین</h3>
+        <label class="music-import">
+          <input id="music-file" type="file" accept="audio/*" multiple hidden>
+          <span>ایمپورت موزیک از گوشی</span>
+        </label>
+        <div class="music-list" id="music-list"></div>
+      </section>
+
+      <section class="profile-card">
+        <h3>بیشتر</h3>
+        <div class="profile-grid">
+          <label>سطح فعالیت
+            <select id="activity">
+              <option value="">انتخاب کن</option>
+              <option value="low">کم</option>
+              <option value="mid">متوسط</option>
+              <option value="high">زیاد</option>
+              <option value="pro">ورزشکار حرفه‌ای</option>
+            </select>
+          </label>
+          <label>سابقه (سال)<input id="experienceYears" type="number" min="0" max="60" inputmode="numeric"></label>
+          <label>تماس<input id="phone" type="tel" dir="ltr"></label>
+          <label>ایمیل<input id="email" type="email" dir="ltr" readonly></label>
+          <div class="profile-wide cond-row">
+            <span>بیماری</span>
+            <label><input type="checkbox" id="cond-diabetes"> دیابت</label>
+            <label><input type="checkbox" id="cond-bp"> فشار خون بالا</label>
+            <label><input type="checkbox" id="cond-chol"> کلسترول بالا</label>
+          </div>
+          <label class="profile-wide">آسیب یا محدودیت پزشکی<textarea id="injuries" rows="2"></textarea></label>
+        </div>
+        <button type="button" class="btn btn-secondary" id="out">خروج از حساب</button>
+      </section>
+    </main>
+
+    <div class="profile-savebar">
+      <button type="button" class="btn btn-primary" id="save">ثبت و ذخیره اطلاعات</button>
+      <p id="msg" class="ok" hidden></p>
+      <p id="err" class="error-message" hidden></p>
+    </div>
+  </div>
+  <div class="jalali-pop" id="jalali-pop" hidden>
+    <div class="jalali-nav">
+      <button type="button" data-shift="-12" aria-label="سال قبل">«</button>
+      <button type="button" data-shift="-1" aria-label="ماه قبل">‹</button>
+      <strong id="jalali-title"></strong>
+      <button type="button" data-shift="1" aria-label="ماه بعد">›</button>
+      <button type="button" data-shift="12" aria-label="سال بعد">»</button>
+    </div>
+    <div class="jalali-week" id="jalali-week"></div>
+    <div class="jalali-days" id="jalali-days"></div>
+  </div>
+  <script src="js/i18n.js"></script>
+  <script src="js/jalali.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

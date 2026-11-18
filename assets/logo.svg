@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" fill="none" role="img" aria-label="Healthy Nutrition Plan">
+  <defs>
+    <linearGradient id="np-bg" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14B8A6"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="np-text" x1="76" y1="12" x2="310" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#064E3B"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
+  <!-- Icon -->
+  <rect x="2" y="2" width="60" height="60" rx="18" fill="url(#np-bg)"/>
+  <path d="M20 24V20h5M44 20h5v4M49 40v4h-5M25 44h-5v-4" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+  <path d="M18 38c0-7 6.3-12 14-12s14 5 14 12" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+  <path d="M16 38h32" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" opacity="0.85"/>
+  <path d="M32 14c4 3 5.5 7 4.5 11-3.5-1-6-4-6.5-8 2.5-1.5 4.5-2 2-3z" fill="#FFFFFF" opacity="0.95"/>
+  <!-- Wordmark -->
+  <text x="76" y="27" font-family="Outfit, system-ui, sans-serif" font-size="17" font-weight="700" letter-spacing="-0.02em" fill="url(#np-text)">Healthy Nutrition</text>
+  <text x="76" y="48" font-family="Outfit, system-ui, sans-serif" font-size="14" font-weight="600" letter-spacing="0.22em" fill="#0D9488">PLAN</text>
+</svg>

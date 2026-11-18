@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ورود | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell login-page">
+    <header class="login-top">
+      <a href="index.html" class="login-back" aria-label="بازگشت">‹</a>
+    </header>
+    <main class="login-main">
+      <img class="login-mark" src="/assets/logo-home.svg" alt="Healthy Nutrition Plan">
+      <h1>ورود به حساب</h1>
+      <p class="login-sub">با موبایل کد پیامکی می‌گیری. ایمیل برای تست همان رمز است.</p>
+      <form class="login-card" id="login-form">
+        <div class="login-seg" role="tablist">
+          <button type="button" class="on" data-tab="in">ورود</button>
+          <button type="button" data-tab="up">ثبت‌نام</button>
+        </div>
+        <label class="login-label" id="name-field" hidden>نام
+          <span class="login-box"><input id="name" type="text" autocomplete="name"></span>
+        </label>
+        <label class="login-label" id="phone-field">موبایل
+          <span class="login-box">
+            <span class="login-cc">+۹۸</span>
+            <input id="phone" type="tel" dir="ltr" inputmode="numeric" autocomplete="tel">
+          </span>
+        </label>
+        <label class="login-label" id="email-field" hidden>ایمیل
+          <span class="login-box"><input id="email" type="email" dir="ltr" placeholder="name@email.com" autocomplete="username"></span>
+        </label>
+        <label class="login-label" id="pass-field" hidden>رمز
+          <span class="login-box">
+            <input id="password" type="password" dir="ltr" placeholder="حداقل ۴ حرف" autocomplete="current-password">
+            <button type="button" class="login-eye" id="eye">نمایش</button>
+          </span>
+        </label>
+        <label class="login-label" id="otp-field" hidden>کد پیامک
+          <span class="login-box">
+            <input id="otp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" dir="ltr" autocomplete="one-time-code" name="one-time-code" enterkeyhint="done">
+          </span>
+        </label>
+        <p class="login-otp-hint" id="otp-hint" hidden></p>
+        <button type="submit" class="login-go" id="go">ارسال کد <span>‹</span></button>
+        <button type="button" class="login-mail-link" id="use-email">می‌خواهم با ایمیل وارد شوم</button>
+        <p id="err" class="error-message" hidden></p>
+      </form>
+      <p class="login-fine">با ادامه، قوانین Healthy Nutrition Plan را می‌پذیری.</p>
+    </main>
+  </div>
+  <script src="js/i18n.js"></script>
+  <script src="js/account.js"></script>
+  <script>
+    let mode = 'login';
+    let withEmail = false;
+    let otpSent = false;
+    let otpAbort = null;
+    const nameField = document.getElementById('name-field');
+    const emailField = document.getElementById('email-field');
+    const passField = document.getElementById('pass-field');
+    const phoneField = document.getElementById('phone-field');
+    const otpField = document.getElementById('otp-field');
+    const otpHint = document.getElementById('otp-hint');
+    const go = document.getElementById('go');
+    const segs = document.querySelectorAll('.login-seg button');
+
+    function paint() {
+      nameField.hidden = mode !== 'signup';
+      emailField.hidden = !withEmail;
+      phoneField.hidden = withEmail;
+      passField.hidden = !withEmail;
+      otpField.hidden = withEmail || !otpSent;
+      otpHint.hidden = withEmail || !otpSent;
+      if (withEmail) go.innerHTML = (mode === 'signup' ? 'ساخت حساب' : 'ادامه') + ' <span>‹</span>';
+      else if (otpSent) go.innerHTML = 'تأیید کد <span>‹</span>';
+      else go.innerHTML = 'ارسال کد <span>‹</span>';
+    }
+
+    function listenSmsAutofill() {
+      if (!window.OTPCredential || !navigator.credentials?.get) return;
+      otpAbort?.abort();
+      otpAbort = new AbortController();
+      navigator.credentials.get({
+        otp: { transport: ['sms'] },
+        signal: otpAbort.signal,
+      }).then((otp) => {
+        if (otp?.code) document.getElementById('otp').value = otp.code;
+      }).catch(() => {});
+    }
+
+    segs.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        segs.forEach((item) => item.classList.toggle('on', item === btn));
+        mode = btn.dataset.tab === 'up' ? 'signup' : 'login';
+        otpSent = false;
+        paint();
+      });
+    });
+    document.getElementById('use-email').addEventListener('click', () => {
+      withEmail = !withEmail;
+      otpSent = false;
+      otpAbort?.abort();
+      document.getElementById('use-email').textContent = withEmail
+        ? 'می‌خواهم با موبایل وارد شوم'
+        : 'می‌خواهم با ایمیل وارد شوم';
+      paint();
+      (withEmail ? document.getElementById('email') : document.getElementById('phone')).focus();
+    });
+    document.getElementById('eye').addEventListener('click', () => {
+      const field = document.getElementById('password');
+      const show = field.type === 'password';
+      field.type = show ? 'text' : 'password';
+      document.getElementById('eye').textContent = show ? 'پنهان' : 'نمایش';
+    });
+    document.getElementById('phone').addEventListener('input', (event) => {
+      const raw = event.target.value.replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g, '').slice(0, 11);
+      const rest = raw.startsWith('0') ? raw.slice(1) : raw;
+      event.target.value = rest.replace(/(\d{3})(\d{0,3})(\d{0,4})/, (_, a, b, c) => [a, b, c].filter(Boolean).join(' '));
+    });
+    document.getElementById('otp').addEventListener('input', (event) => {
+      event.target.value = event.target.value.replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g, '').slice(0, 5);
+    });
+    document.getElementById('login-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const err = document.getElementById('err');
+      err.hidden = true;
+      const next = new URLSearchParams(location.search).get('next') || 'index.html';
+      try {
+        if (withEmail) {
+          await HNP.registerOrLogin(
+            document.getElementById('email').value,
+            document.getElementById('password').value,
+            document.getElementById('name').value,
+            { mode }
+          );
+          location.href = next;
+          return;
+        }
+        if (!otpSent) {
+          const data = await HNP.sendPhoneOtp(document.getElementById('phone').value, mode);
+          otpSent = true;
+          paint();
+          otpHint.hidden = false;
+          otpHint.textContent = data.devCode
+            ? `پیامک هنوز وصل نیست. کد تست: ${data.devCode}`
+            : 'کد را از پیامک بزن؛ گوشی می‌تواند خودش پرکند.';
+          document.getElementById('otp').focus();
+          listenSmsAutofill();
+          return;
+        }
+        await HNP.verifyPhoneOtp(
+          document.getElementById('phone').value,
+          document.getElementById('otp').value,
+          document.getElementById('name').value,
+          mode
+        );
+        otpAbort?.abort();
+        location.href = next;
+      } catch (e) {
+        err.hidden = false;
+        err.textContent = e.message;
+      }
+    });
+    paint();
+  </script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

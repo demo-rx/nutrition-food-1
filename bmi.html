@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>BMI | Healthy Nutrition Plan</title>
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Outfit:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/bmi.css">
+</head>
+<body data-title-key="html.title.bmi">
+  <div class="app-shell">
+    <header class="bmi-header">
+      <a href="index.html" class="back-btn" data-i18n-aria="scan.back" aria-label="بازگشت">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="header-title">
+        <span class="fa-text" data-i18n="bmi.pageTitle">شاخص توده بدنی</span>
+        <span class="en-sub">BMI</span>
+      </div>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <div id="lang-switch"></div>
+
+    <main class="bmi-main">
+      <section class="bmi-card" id="bmi">
+        <h1 data-i18n="bmi.title">شاخص توده بدنی (BMI)</h1>
+        <p class="bmi-note" data-i18n="bmi.freeNote">برای همه رایگان است. قد و وزن را وارد کن تا وضعیت بدنت مشخص شود.</p>
+        <label class="bmi-field">
+          <span data-i18n="bmi.height">قد (سانتی‌متر)</span>
+          <input type="text" id="bmi-height" inputmode="decimal" autocomplete="off" placeholder="165">
+        </label>
+        <label class="bmi-field">
+          <span data-i18n="bmi.weight">وزن (کیلوگرم)</span>
+          <input type="text" id="bmi-weight" inputmode="decimal" autocomplete="off" placeholder="68">
+        </label>
+        <button type="button" class="btn btn-primary" id="btn-bmi" data-i18n="bmi.calc">محاسبه BMI</button>
+        <p id="bmi-error" class="error-message" hidden></p>
+        <div id="bmi-result" class="bmi-result" hidden>
+          <span class="bmi-value" id="bmi-result-num"></span>
+          <div class="bmi-line" id="bmi-result-line" dir="ltr">
+            <div class="bmi-line-bar">
+              <i class="seg under"></i>
+              <i class="seg normal"></i>
+              <i class="seg over"></i>
+              <i class="seg obese"></i>
+              <span class="bmi-pin" id="bmi-result-pin"></span>
+            </div>
+            <div class="bmi-line-nums">
+              <span>&lt;18.5</span>
+              <span>18.5–24.9</span>
+              <span>25–29.9</span>
+              <span>≥30</span>
+            </div>
+            <div class="bmi-line-labs">
+              <span data-i18n="bmi.under">کم‌وزن</span>
+              <span data-i18n="bmi.normal">سالم</span>
+              <span data-i18n="bmi.over">اضافه‌وزن</span>
+              <span data-i18n="bmi.obese">چاق</span>
+            </div>
+          </div>
+          <span class="bmi-status fa-text" id="bmi-result-status"></span>
+          <span class="bmi-advice fa-text" id="bmi-result-advice"></span>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="js/i18n.js"></script>
+  <script src="js/bmi.js"></script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

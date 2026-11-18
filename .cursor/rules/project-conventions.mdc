@@ -1,0 +1,74 @@
+---
+description: Core project conventions — decisions, mobile-only UI, AI onboarding
+alwaysApply: true
+---
+
+# Nutrition Plan — Project Conventions
+
+## 1. Ask Before Acting
+
+Before starting any non-trivial work, clarify requirements with the user.
+
+**Always ask when:**
+- Scope, architecture, or tech stack is ambiguous
+- Multiple valid approaches exist (UI pattern, file structure, naming)
+- A change affects UX, data model, or project direction
+- The request could be interpreted in more than one way
+
+**Do not ask when:**
+- The user gave explicit, complete instructions
+- The task is a clear bug fix or typo with one obvious solution
+
+**Workflow:** Ask focused questions → wait for answers → summarize understanding → then implement.
+
+---
+
+## 2. Mobile-Only (No Desktop Layout)
+
+This project has **no desktop version**. All UI must look and behave like a mobile app, even on large screens.
+
+**Required:**
+- Design for **375–430px** width; use a centered mobile frame on wider viewports (`max-width: 430px; margin: 0 auto`)
+- Touch targets ≥ **44px**; spacing and typography sized for phones
+- Use `viewport` meta: `width=device-width, initial-scale=1`
+- Prefer single-column layouts; avoid multi-column desktop grids
+
+**Forbidden:**
+- Desktop breakpoints that widen layout (no `min-width: 768px` layout changes)
+- Hover-only interactions without touch equivalents
+- Side-by-side desktop navigation or wide multi-panel layouts
+
+```css
+/* ✅ GOOD — mobile frame on any screen size */
+.app-shell {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+}
+
+/* ❌ BAD — desktop expansion */
+@media (min-width: 1024px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
+```
+
+---
+
+## 3. AI Onboarding — Keep Docs in Sync
+
+Every meaningful change must keep AI-readable docs updated so any model can onboard quickly.
+
+**Required files (maintain on every change):**
+| File | Purpose |
+|------|---------|
+| `AGENTS.md` | Entry point — project summary, stack, conventions, file map |
+| `docs/ARCHITECTURE.md` | Structure, data flow, key decisions |
+| `docs/CHANGELOG.md` | Brief log of significant changes (newest first) |
+
+**On each change:**
+1. Update affected doc sections — do not leave docs stale
+2. Add new files/folders to the file map in `AGENTS.md`
+3. Record non-obvious decisions in `docs/ARCHITECTURE.md`
+4. Append a one-line entry to `docs/CHANGELOG.md`
+
+**Writing style for AI docs:** Short headings, bullet lists, concrete paths, no fluff.

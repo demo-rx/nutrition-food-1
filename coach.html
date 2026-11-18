@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>مربی | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/platform.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="bmi-like">
+      <a href="coaches.html" class="back">بازگشت</a>
+      <h1 id="title">مربی</h1>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <main class="pad">
+      <img class="coach-photo lg" id="photo" alt="" hidden>
+      <p class="coach-rate" id="rate"></p>
+      <section class="price-card" id="diet">
+        <h2>خرید برنامه رژیم</h2>
+        <p id="diet-name"></p>
+        <strong id="diet-price">۹۹٬۰۰۰ تومان</strong>
+        <button type="button" class="btn btn-primary" id="take">خرید و دریافت رژیم</button>
+        <p class="note" id="diet-wait" hidden>رژیم این مربی هنوز منتشر نشده.</p>
+        <p class="note">بعد از خرید فایل رژیم مال تو می‌شود. محتوای رژیم اینجا نشان داده نمی‌شود و برنامهٔ غذایی خودبه‌خود عوض نمی‌شود.</p>
+        <div class="coach-file" id="file-box" hidden></div>
+        <p id="msg" class="note" hidden></p>
+      </section>
+      <div class="coach-about" id="about"></div>
+      <p id="count" class="count"></p>
+      <div class="ad-slot" data-slot="coach-banner"></div>
+      <section class="price-card" id="reviews">
+        <h2>نظر کاربران</h2>
+        <div id="review-list"></div>
+        <p class="note">امتیاز بده و نظرت را بنویس. نظرها همین‌جا دیده می‌شوند.</p>
+        <div class="star-pick" id="star-pick">
+          <button type="button" data-star="1" aria-label="۱">★</button>
+          <button type="button" data-star="2" aria-label="۲">★</button>
+          <button type="button" data-star="3" aria-label="۳">★</button>
+          <button type="button" data-star="4" aria-label="۴">★</button>
+          <button type="button" data-star="5" aria-label="۵">★</button>
+        </div>
+        <textarea id="review-text" maxlength="500" placeholder="نظرت درباره این مربی"></textarea>
+        <button type="button" class="btn btn-primary" id="review-save">ثبت نظر</button>
+        <p id="review-msg" class="note" hidden></p>
+      </section>
+      <div id="videos"></div>
+    </main>
+  </div>
+  <script src="js/i18n.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/ads.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get('id');
+    const token = () => (HNP.currentUser() || {}).token;
+    let reviewStars = 5;
+    function esc(value) {
+      return String(value || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      }[ch]));
+    }
+    function paintStars() {
+      document.querySelectorAll('#star-pick button').forEach((btn) => {
+        btn.classList.toggle('on', Number(btn.dataset.star) <= reviewStars);
+      });
+    }
+    function paintReviews(list) {
+      const box = document.getElementById('review-list');
+      if (!list?.length) {
+        box.innerHTML = '<p class="note">هنوز نظری ثبت نشده.</p>';
+        return;
+      }
+      box.innerHTML = list.map((item) => {
+        const when = item.at ? new Date(item.at).toLocaleDateString('fa-IR') : '';
+        const stars = '★'.repeat(item.stars) + '☆'.repeat(5 - item.stars);
+        return `<article class="review-item"><div><strong>${esc(stars)}</strong> · ${esc(item.name)} ${when ? '· ' + esc(when) : ''}</div><p>${esc(item.text)}</p></article>`;
+      }).join('');
+    }
+    async function load() {
+      const res = await fetch('/api/coaches/' + encodeURIComponent(id));
+      const data = await res.json();
+      const c = data.coach;
+      if (!c) return;
+      document.getElementById('title').textContent = c.name;
+      const photo = document.getElementById('photo');
+      if (c.photo) { photo.hidden = false; photo.src = c.photo; photo.alt = c.name; }
+      const reviewAvg = c.reviews?.length
+        ? Math.round((c.reviews.reduce((sum, item) => sum + item.stars, 0) / c.reviews.length) * 10) / 10
+        : null;
+      document.getElementById('rate').textContent = reviewAvg
+        ? `★ ${reviewAvg} از ۵ · ${c.reviews.length} نظر`
+        : (c.rating ? `★ ${c.rating} از ۵` : '');
+      paintReviews(c.reviews);
+      document.getElementById('about').innerHTML = [
+        c.specialty ? `<p><strong>تخصص:</strong> ${c.specialty}</p>` : '',
+        c.style ? `<p><strong>سبک رژیم:</strong> ${c.style}</p>` : '',
+        c.audience ? `<p><strong>برای چه کسی:</strong> ${c.audience}</p>` : '',
+        c.bio ? `<p>${c.bio}</p>` : '',
+      ].join('');
+      document.getElementById('count').textContent = `${c.athleteCount} ورزشکار در حال حاضر از رژیم غذایی ${c.name} استفاده می‌کنند`;
+      document.getElementById('diet-name').textContent = c.planName || 'فایل رژیم این مربی';
+      const owned = HNP.isLoggedIn() && HNP.ownedPlans().some((item) => item.coachId === c.id);
+      const take = document.getElementById('take');
+      const wait = document.getElementById('diet-wait');
+      if (!c.planFile) {
+        take.hidden = true;
+        document.getElementById('diet-price').hidden = true;
+        wait.hidden = false;
+        document.getElementById('diet-name').textContent = 'رژیم این مربی هنوز منتشر نشده';
+      } else {
+        wait.hidden = true;
+        take.hidden = owned;
+        document.getElementById('diet-price').hidden = owned;
+        take.textContent = HNP.isPremium() ? 'دریافت فایل رژیم' : 'خرید و دریافت رژیم — ۹۹٬۰۰۰ تومان';
+      }
+      const box = document.getElementById('file-box');
+      if (owned && c.planFile) {
+        box.hidden = false;
+        box.innerHTML = `<p>این رژیم مال تو شد. برنامهٔ غذایی هنوز عوض نشده.</p><a class="btn btn-secondary" href="${c.planFile}" download>دانلود فایل رژیم</a><a class="btn btn-primary" href="plan.html">ببر در برنامهٔ غذایی</a>`;
+      } else {
+        box.hidden = true;
+      }
+      document.getElementById('videos').innerHTML = (c.videos || []).map((v) => `
+        <div class="video-card">
+          <h3>${v.title}</h3>
+          <iframe src="${v.url}" title="${v.title}" allowfullscreen loading="lazy"></iframe>
+        </div>
+      `).join('');
+    }
+    async function claimDiet() {
+      const msg = document.getElementById('msg');
+      const coachRes = await fetch('/api/coaches/' + encodeURIComponent(id));
+      const coachData = await coachRes.json();
+      const coach = coachData.coach;
+      const res = await fetch('/api/me/coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token() },
+        body: JSON.stringify({ coachId: id }),
+      });
+      const data = await res.json();
+      if (res.ok && coach?.planFile) {
+        HNP.addOwnedPlan({
+          coachId: coach.id,
+          name: coach.planName || 'رژیم مربی',
+          coachName: coach.name,
+          file: coach.planFile,
+        });
+      }
+      msg.hidden = false;
+      msg.textContent = res.ok
+        ? 'خرید انجام شد. فایل رژیم پیش تو ماند و برنامهٔ غذایی عوض نشد.'
+        : data.error;
+      await load();
+    }
+    paintStars();
+    document.getElementById('star-pick').addEventListener('click', (event) => {
+      const btn = event.target.closest('button');
+      if (!btn) return;
+      reviewStars = Number(btn.dataset.star);
+      paintStars();
+    });
+    document.getElementById('review-save').addEventListener('click', async () => {
+      const msg = document.getElementById('review-msg');
+      if (!HNP.isLoggedIn() || !token()) {
+        location.href = 'login.html?next=' + encodeURIComponent('coach.html?id=' + id);
+        return;
+      }
+      const res = await fetch('/api/coaches/' + encodeURIComponent(id) + '/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token() },
+        body: JSON.stringify({ stars: reviewStars, text: document.getElementById('review-text').value }),
+      });
+      const data = await res.json().catch(() => ({}));
+      msg.hidden = false;
+      msg.textContent = res.ok ? 'نظرت ثبت شد.' : (data.error || 'نظر ثبت نشد');
+      if (res.ok) {
+        document.getElementById('review-text').value = '';
+        await load();
+      }
+    });
+    document.getElementById('take').addEventListener('click', async () => {
+      if (!HNP.isLoggedIn()) {
+        location.href = 'login.html?next=' + encodeURIComponent('coach.html?id=' + id);
+        return;
+      }
+      if (!HNP.isPremium()) {
+        location.href = 'subscribe.html?next=' + encodeURIComponent('coach.html?id=' + id);
+        return;
+      }
+      await claimDiet();
+    });
+    load().then(() => {
+      if (new URLSearchParams(location.search).get('bought') === '1' && HNP.isPremium()) {
+        history.replaceState({}, '', 'coach.html?id=' + encodeURIComponent(id));
+        if (!HNP.ownedPlans().some((item) => item.coachId === id)) claimDiet();
+      }
+    });
+  </script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

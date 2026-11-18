@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ممیزی رژیم | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/platform.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="bmi-like">
+      <a href="index.html" class="back">بازگشت</a>
+      <h1>ممیزی رژیم</h1>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <main class="pad">
+      <p class="note">فایل را اینجا بگذار و بخوان. تا دکمهٔ «منتشر کن» را نزنی، ورزشکار فایل را نمی‌بیند و نمی‌تواند بخرد.</p>
+      <p class="note"><a href="inbox.html">گزارش خطا و امتیاز کاربران</a> · <a href="admin-market.html">ادمین بازار سلامت</a></p>
+      <p id="err" class="error-message" hidden></p>
+      <div id="list"></div>
+      <section id="food-bank">
+        <h2>بانک غذا</h2>
+        <p class="note">اسم چرت را حذف کن. فقط تأییدشده در پیشنهاد کاربر می‌آید. غذای تازه تا بار دوم یا تأیید تو مخفی است.</p>
+        <div id="foods"></div>
+      </section>
+    </main>
+  </div>
+  <script src="js/account.js"></script>
+  <script>
+    const token = () => (HNP.currentUser() || {}).token || '';
+    function authHeaders(extra) {
+      return Object.assign({ Authorization: 'Bearer ' + token() }, extra || {});
+    }
+    function showErr(text) {
+      const err = document.getElementById('err');
+      err.hidden = !text;
+      err.textContent = text || '';
+    }
+    function statusOf(coach) {
+      if (coach.draft && coach.live) return 'منتشر شده است و یک فایل تازه منتظر ممیزی است';
+      if (coach.draft) return 'پیش‌نویس است؛ هنوز برای ورزشکار منتشر نشده';
+      if (coach.live) return 'منتشر شده و ورزشکار می‌تواند بخرد';
+      return 'فایلی گذاشته نشده';
+    }
+    function esc(value) {
+      return String(value || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      }[ch]));
+    }
+    function card(coach) {
+      const when = coach.draft?.uploadedAt
+        ? new Date(coach.draft.uploadedAt).toLocaleString('fa-IR')
+        : '';
+      const current = coach.live
+        ? 'نسخهٔ فعلی ورزشکار: ' + (coach.publishedName || 'رژیم منتشرشده')
+        : 'ورزشکار الان فایلی از این مربی نمی‌بیند.';
+      return `
+        <section class="price-card" data-id="${esc(coach.id)}">
+          <img class="coach-photo" src="${esc(coach.photo || '')}" alt="">
+          <h2>${esc(coach.name)}</h2>
+          <p class="admin-status">${esc(statusOf(coach))}</p>
+          <p class="note">${esc(current)}</p>
+          <label>نام رژیم<input class="plan-name" value="${esc(coach.draft?.planName || coach.publishedName || '')}"></label>
+          <label>فایل رژیم<input class="plan-file" type="file" accept=".txt,text/plain,application/pdf,image/*"></label>
+          <button type="button" class="btn btn-secondary save">بگذار برای ممیزی</button>
+          ${coach.draft ? `<p class="note">فایل منتظر ممیزی: ${esc(coach.draft.originalName || 'رژیم')} ${when ? '— ' + esc(when) : ''}</p>` : ''}
+          ${coach.draft?.preview ? `<pre class="admin-preview"></pre>` : ''}
+          ${coach.draft && !coach.draft.preview ? `<button type="button" class="btn btn-secondary open">دیدن فایل برای ممیزی</button>` : ''}
+          <button type="button" class="btn btn-primary publish" ${coach.draft ? '' : 'disabled'}>منتشر کن</button>
+          <button type="button" class="btn btn-secondary hide" ${coach.live ? '' : 'disabled'}>از دسترس ورزشکار بردار</button>
+        </section>`;
+    }
+    function bind(coach) {
+      const root = document.querySelector(`[data-id="${coach.id}"]`);
+      const pre = root.querySelector('.admin-preview');
+      if (pre) pre.textContent = coach.draft.preview;
+      root.querySelector('.save').addEventListener('click', () => saveDraft(coach.id, root));
+      const open = root.querySelector('.open');
+      if (open) open.addEventListener('click', () => openDraft(coach.id));
+      root.querySelector('.publish').addEventListener('click', () => act(coach.id, 'publish'));
+      root.querySelector('.hide').addEventListener('click', () => act(coach.id, 'unpublish'));
+    }
+    function foodCard(item) {
+      const state = item.approved ? 'تأیید شده' : 'در انتظار';
+      return `<article class="desk-slot" data-food="${esc(item.key)}">
+        <div><b>${esc(item.name)}</b> · <span class="desk-tag">${esc(state)}</span> · ${esc(String(item.count))} بار</div>
+        <div>
+          ${item.approved ? '' : `<button type="button" class="btn btn-primary" data-approve="${esc(item.key)}">تأیید</button>`}
+          <button type="button" class="btn btn-secondary" data-drop="${esc(item.key)}">حذف</button>
+        </div>
+      </article>`;
+    }
+    async function loadFoods() {
+      const box = document.getElementById('foods');
+      const res = await fetch('/api/admin/foods', { headers: authHeaders() });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        box.textContent = data.error || 'بانک باز نشد';
+        return;
+      }
+      const foods = data.foods || [];
+      box.innerHTML = foods.length ? foods.map(foodCard).join('') : '<p class="note">غذایی نیست.</p>';
+      box.querySelectorAll('[data-approve]').forEach((btn) => {
+        btn.addEventListener('click', () => foodAct('approve', btn.dataset.approve));
+      });
+      box.querySelectorAll('[data-drop]').forEach((btn) => {
+        btn.addEventListener('click', () => foodAct('drop', btn.dataset.drop));
+      });
+    }
+    async function foodAct(kind, key) {
+      const path = kind === 'approve'
+        ? '/api/admin/foods/' + encodeURIComponent(key) + '/approve'
+        : '/api/admin/foods/' + encodeURIComponent(key);
+      const res = await fetch(path, {
+        method: kind === 'approve' ? 'POST' : 'DELETE',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        showErr(data.error || 'انجام نشد');
+        return;
+      }
+      await loadFoods();
+    }
+    async function load() {
+      const res = await fetch('/api/admin/coaches', { headers: authHeaders() });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        location.href = 'login.html?next=' + encodeURIComponent('admin.html');
+        return;
+      }
+      if (!res.ok) {
+        showErr(data.error || 'این حساب ادمین نیست');
+        return;
+      }
+      const list = document.getElementById('list');
+      list.innerHTML = (data.coaches || []).map(card).join('');
+      (data.coaches || []).forEach(bind);
+    }
+    async function saveDraft(id, root) {
+      const file = root.querySelector('.plan-file').files[0];
+      if (!file) {
+        showErr('اول فایل رژیم را انتخاب کن');
+        return;
+      }
+      showErr('');
+      const body = new FormData();
+      body.append('file', file);
+      body.append('planName', root.querySelector('.plan-name').value);
+      const res = await fetch('/api/admin/coaches/' + encodeURIComponent(id) + '/draft', {
+        method: 'POST',
+        headers: authHeaders(),
+        body,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        showErr(data.error || 'فایل ذخیره نشد');
+        return;
+      }
+      await load();
+    }
+    async function openDraft(id) {
+      const res = await fetch('/api/admin/coaches/' + encodeURIComponent(id) + '/draft', { headers: authHeaders() });
+      if (!res.ok) {
+        showErr('فایل برای ممیزی باز نشد');
+        return;
+      }
+      const blob = await res.blob();
+      window.open(URL.createObjectURL(blob), '_blank');
+    }
+    async function act(id, kind) {
+      showErr('');
+      const res = await fetch('/api/admin/coaches/' + encodeURIComponent(id) + '/' + kind, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: '{}',
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        showErr(data.error || 'انجام نشد');
+        return;
+      }
+      await load();
+    }
+    if (!HNP.isLoggedIn()) {
+      location.href = 'login.html?next=' + encodeURIComponent('admin.html');
+    } else {
+      load().then(loadFoods).catch(() => showErr('صفحهٔ ممیزی باز نشد'));
+    }
+  </script>
+</body>
+</html>

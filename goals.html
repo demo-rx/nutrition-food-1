@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>اهداف سلامت | Healthy Nutrition Plan</title>
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Outfit:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/plan.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="plan-header">
+      <a href="index.html" class="back-btn" aria-label="بازگشت">←</a>
+      <div class="header-title">
+        <span class="fa-text">اهداف سلامت</span>
+      </div>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <div id="lang-switch" hidden></div>
+    <main class="plan-main">
+      <section class="view active">
+        <div class="tabs goal-tabs">
+          <button type="button" class="tab active" data-tab="steps">قدم</button>
+          <button type="button" class="tab" data-tab="heart">ضربان</button>
+          <button type="button" class="tab" data-tab="pressure">فشار</button>
+          <button type="button" class="tab" data-tab="sugar">قند</button>
+        </div>
+
+        <div class="card" data-panel="steps">
+          <p class="pulse-num" id="step-count">۰</p>
+          <p class="auth-note" id="step-goal-label">از ۸۰۰۰ قدم امروز</p>
+          <div class="lab-progress"><span id="step-bar"></span></div>
+          <button type="button" class="btn btn-primary" id="step-toggle">شروع شمارش</button>
+          <p class="auth-note">گوشی را همراهت نگه دار. این شمارش تخمینی است، نه دستگاه پزشکی.</p>
+          <p id="step-msg" class="auth-note" hidden></p>
+        </div>
+
+        <div class="card" data-panel="heart" hidden>
+          <div class="pulse-monitor" id="goal-heart">
+            <div class="pulse-readout">
+              <div>
+                <p class="pulse-num" id="pulse-num">—</p>
+                <span>ضربان</span>
+              </div>
+              <div>
+                <p class="pulse-num pulse-o2" id="pulse-o2">—</p>
+                <span>اکسیژن ٪</span>
+              </div>
+            </div>
+            <canvas id="pulse-trace" class="pulse-trace" width="640" height="160" aria-hidden="true"></canvas>
+          </div>
+          <a class="btn btn-primary" id="pulse-start" href="goals.html">اسکن ضربان و اکسیژن</a>
+          <p class="auth-note">اکسیژن از نور دوربین تخمین زده می‌شود، نه دستگاه پزشکی.</p>
+          <ul id="pulse-history" class="pulse-history" hidden></ul>
+          <div id="pulse-box" class="pulse-box" hidden>
+            <video id="pulse-video" playsinline muted autoplay></video>
+            <p id="pulse-torch" class="auth-note">چراغ دوربین</p>
+            <p id="pulse-status" class="auth-note">انگشت را کامل روی دوربین عقب بگذار.</p>
+            <button type="button" class="btn btn-secondary" id="pulse-stop">بستن دوربین</button>
+          </div>
+        </div>
+
+        <div class="card" data-panel="pressure" hidden>
+          <div class="vitals-grid">
+            <label class="field">فشار بالا
+              <input id="vital-sys" type="text" inputmode="numeric" placeholder="۱۲۰" dir="ltr">
+            </label>
+            <label class="field">فشار پایین
+              <input id="vital-dia" type="text" inputmode="numeric" placeholder="۸۰" dir="ltr">
+            </label>
+          </div>
+          <button type="button" class="btn btn-primary" id="save-pressure">ثبت فشار</button>
+          <p id="pressure-msg" class="auth-note" hidden></p>
+        </div>
+
+        <div class="card" data-panel="sugar" hidden>
+          <label class="field">قند خون
+            <input id="vital-sugar" type="text" inputmode="numeric" placeholder="۹۵" dir="ltr">
+          </label>
+          <button type="button" class="btn btn-primary" id="save-sugar">ثبت قند</button>
+          <p id="sugar-msg" class="auth-note" hidden></p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="js/i18n.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/gate.js"></script>
+  <script src="js/goals.js"></script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

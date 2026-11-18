@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ادمین بازار | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/platform.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="bmi-like">
+      <a href="admin.html" class="back">بازگشت</a>
+      <h1>ادمین بازار</h1>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <main class="pad">
+      <p class="note">این صفحه فقط برای ادمین است. دکتر و رستوران را از اینجا اضافه یا حذف کن. دستور پخت کاربران هم اینجاست.</p>
+      <form id="market-form" class="price-card">
+        <label>نوع
+          <select id="f-kind">
+            <option value="doctors">دکتر تغذیه</option>
+            <option value="recipes">دستور پخت</option>
+            <option value="restaurants">رستوران سلامت</option>
+          </select>
+        </label>
+        <label>عنوان<input id="f-name" required maxlength="80"></label>
+        <label>سمت / تخصص<input id="f-title" maxlength="80"></label>
+        <label>شهر<input id="f-city" maxlength="40"></label>
+        <label>تلفن<input id="f-phone" maxlength="20" dir="ltr"></label>
+        <label>قیمت<input id="f-price" maxlength="80"></label>
+        <label>عکس<input id="f-photo" type="file" accept="image/*"></label>
+        <label>معرفی<textarea id="f-bio" maxlength="400" rows="4"></textarea></label>
+        <p class="note" id="form-status"></p>
+        <button type="submit" class="btn btn-primary">ثبت در بازار</button>
+      </form>
+      <p id="err" class="error-message" hidden></p>
+      <div id="list"></div>
+    </main>
+  </div>
+  <script src="js/account.js"></script>
+  <script>
+    const token = () => (HNP.currentUser() || {}).token || '';
+    const LABELS = { doctors: 'دکتر تغذیه', recipes: 'دستور پخت', restaurants: 'رستوران سلامت' };
+    function esc(value) {
+      return String(value || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      }[ch]));
+    }
+    function showErr(text) {
+      const err = document.getElementById('err');
+      err.hidden = !text;
+      err.textContent = text || '';
+    }
+    async function load() {
+      const res = await fetch('/api/admin/market', { headers: { Authorization: 'Bearer ' + token() } });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        location.href = 'login.html?next=' + encodeURIComponent('admin-market.html');
+        return;
+      }
+      if (!res.ok) {
+        showErr(data.error || 'این حساب ادمین نیست');
+        return;
+      }
+      const box = document.getElementById('list');
+      box.innerHTML = ['doctors', 'recipes', 'restaurants'].map((kind) => {
+        const items = data[kind] || [];
+        return `<section class="price-card"><h2>${LABELS[kind]}</h2>${
+          items.map((item) => `<article class="desk-slot">
+            <strong>${esc(item.name)}</strong>
+            <p class="note">${esc(item.city)} · ${esc(item.price)}</p>
+            <button type="button" class="btn btn-secondary" data-del="${kind}:${item.id}">حذف از صفحه کاربر</button>
+          </article>`).join('') || '<p class="note">خالی</p>'
+        }</section>`;
+      }).join('');
+      box.querySelectorAll('[data-del]').forEach((btn) => {
+        btn.addEventListener('click', () => removeItem(btn.dataset.del));
+      });
+    }
+    async function removeItem(raw) {
+      const [kind, id] = String(raw).split(':');
+      const res = await fetch('/api/admin/market/' + encodeURIComponent(kind) + '/' + encodeURIComponent(id), {
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer ' + token() },
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        showErr(data.error || 'حذف نشد');
+        return;
+      }
+      await load();
+    }
+    document.getElementById('market-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = document.getElementById('form-status');
+      const kind = document.getElementById('f-kind').value;
+      status.textContent = 'در حال ثبت…';
+      const body = new FormData();
+      body.append('name', document.getElementById('f-name').value);
+      body.append('title', document.getElementById('f-title').value);
+      body.append('city', document.getElementById('f-city').value);
+      body.append('phone', document.getElementById('f-phone').value);
+      body.append('price', document.getElementById('f-price').value);
+      body.append('bio', document.getElementById('f-bio').value);
+      const photo = document.getElementById('f-photo').files[0];
+      if (photo) body.append('photo', photo);
+      const res = await fetch('/api/market/' + kind, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token() },
+        body,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        status.textContent = data.error || 'ثبت نشد';
+        return;
+      }
+      status.textContent = 'ثبت شد.';
+      event.target.reset();
+      await load();
+    });
+    if (!HNP.isLoggedIn()) {
+      location.href = 'login.html?next=' + encodeURIComponent('admin-market.html');
+    } else {
+      load().catch(() => showErr('صفحه باز نشد'));
+    }
+  </script>
+</body>
+</html>

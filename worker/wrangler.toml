@@ -1,0 +1,11 @@
+name = "healthy-nutrition-openrouter"
+main = "src/index.js"
+compatibility_date = "2026-11-17"
+
+[[ratelimits]]
+name = "SCAN_RATE_LIMITER"
+namespace_id = "314159"
+
+  [ratelimits.simple]
+  limit = 6
+  period = 60

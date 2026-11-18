@@ -1,0 +1,243 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.page-hero-logo {
+  width: 180px;
+  height: 180px;
+  margin: 0.1rem auto 0.85rem;
+  display: block;
+  object-fit: contain;
+  background: transparent;
+}
+
+.header-spacer {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+:root {
+  --app-max-width: 430px;
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-900: #14532d;
+  --sage: #5b9a6d;
+  --sage-deep: #3e7a52;
+  --sage-ink: #ffffff;
+  --white: #ffffff;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --shadow: 0 25px 50px -12px rgba(22, 163, 74, 0.15);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Outfit', 'Vazirmatn', 'Cairo', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+html[lang="fa"] body,
+html[lang="fa"] .fa-text {
+  font-family: 'Vazirmatn', system-ui, sans-serif;
+}
+
+html[lang="ar"] body,
+html[lang="ar"] .fa-text {
+  font-family: 'Cairo', 'Vazirmatn', system-ui, sans-serif;
+}
+
+html[lang="en"] body {
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+html.i18n-ready .en-sub {
+  display: none !important;
+}
+
+.lang-switch,
+#lang-switch {
+  display: none !important;
+}
+
+.lang-btn {
+  min-width: 44px;
+  min-height: 36px;
+  padding: 0 0.55rem;
+  border-radius: 10px;
+  border: 1px solid var(--green-100);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--green-900);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.lang-btn.active {
+  background: var(--green-500);
+  color: var(--white);
+  border-color: var(--green-600);
+}
+
+body {
+  background: var(--gray-200);
+  color: var(--green-900);
+  min-height: 100dvh;
+}
+
+.app-shell {
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  height: 100dvh;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--green-50) 0%, var(--white) 35%, var(--green-100) 100%);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+[dir="rtl"] .fa-text {
+  font-family: 'Vazirmatn', system-ui, sans-serif;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  min-height: 48px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  width: 100%;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--sage), var(--sage-deep));
+  color: var(--sage-ink);
+  box-shadow: 0 8px 18px rgba(62, 122, 82, 0.22);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--green-700);
+  border: 2px solid var(--green-100);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.bmi-result {
+  padding: 0.85rem;
+  border-radius: 12px;
+  background: var(--green-50);
+  border: 1px solid var(--green-100);
+}
+
+.bmi-result .bmi-value {
+  font-family: 'Outfit', system-ui, sans-serif;
+  direction: ltr;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--green-700);
+}
+
+.bmi-result .bmi-status {
+  display: block;
+  margin-top: 0.35rem;
+  font-weight: 700;
+  color: var(--green-900);
+}
+
+.bmi-result .bmi-advice {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--gray-800);
+}
+
+.bmi-result.is-under { background: #eff6ff; border-color: #bfdbfe; }
+.bmi-result.is-under .bmi-value { color: #1d4ed8; }
+.bmi-result.is-over { background: #fffbeb; border-color: #fde68a; }
+.bmi-result.is-over .bmi-value { color: #c2410c; }
+.bmi-result.is-obese { background: #fef2f2; border-color: #fecaca; }
+.bmi-result.is-obese .bmi-value { color: #b91c1c; }
+
+.bmi-line { direction: ltr; }
+.bmi-line-bar {
+  display: flex;
+  position: relative;
+  height: 16px;
+  border-radius: 999px;
+  overflow: visible;
+  margin: 0.35rem 0 0.4rem;
+}
+.bmi-line-bar .seg { flex: 1; height: 16px; }
+.bmi-line-bar .seg:first-child { border-radius: 999px 0 0 999px; }
+.bmi-line-bar .seg:last-of-type { border-radius: 0 999px 999px 0; }
+.bmi-line-bar .seg.under { background: #3b82f6; }
+.bmi-line-bar .seg.normal { background: #22c55e; }
+.bmi-line-bar .seg.over { background: #f97316; }
+.bmi-line-bar .seg.obese { background: #ef4444; }
+.bmi-line.is-under .seg:not(.under),
+.bmi-line.is-normal .seg:not(.normal),
+.bmi-line.is-over .seg:not(.over),
+.bmi-line.is-obese .seg:not(.obese) { opacity: 0.38; }
+.bmi-pin {
+  position: absolute;
+  top: -4px;
+  width: 4px;
+  height: 24px;
+  margin-left: -2px;
+  background: #111827;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+.bmi-line-nums,
+.bmi-line-labs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+  gap: 0.15rem;
+}
+.bmi-line-nums { font-size: 0.72rem; color: #4b5563; font-variant-numeric: tabular-nums; }
+.bmi-line-labs { margin-top: 0.15rem; font-size: 0.78rem; font-weight: 700; color: #6b7280; }
+.bmi-line.is-under .bmi-line-labs span:nth-child(1) { color: #1d4ed8; }
+.bmi-line.is-normal .bmi-line-labs span:nth-child(2) { color: #15803d; }
+.bmi-line.is-over .bmi-line-labs span:nth-child(3) { color: #c2410c; }
+.bmi-line.is-obese .bmi-line-labs span:nth-child(4) { color: #b91c1c; }
+
+.error-message {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  text-align: center;
+}

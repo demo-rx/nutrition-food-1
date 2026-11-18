@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>گزارش‌ها و امتیازها | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/platform.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="bmi-like">
+      <a href="index.html" class="back">بازگشت</a>
+      <h1>گزارش‌ها و امتیازها</h1>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <main class="pad">
+      <p id="err" class="error-message" hidden></p>
+      <section class="price-card">
+        <h2>نظرات</h2>
+        <p class="note" id="avg">هنوز امتیازی نیست.</p>
+        <div id="ratings"></div>
+      </section>
+      <section class="price-card">
+        <h2>گزارش خطا</h2>
+        <div id="bugs"></div>
+      </section>
+    </main>
+  </div>
+  <script src="js/account.js"></script>
+  <script>
+    const token = () => (HNP.currentUser() || {}).token || '';
+    function esc(value) {
+      return String(value || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      }[ch]));
+    }
+    function when(at) {
+      try { return new Date(at).toLocaleString('fa-IR'); } catch { return ''; }
+    }
+    function stars(n) { return '★★★★★'.slice(0, Number(n) || 0); }
+    async function load() {
+      const err = document.getElementById('err');
+      const res = await fetch('/api/admin/feedback', { headers: { Authorization: 'Bearer ' + token() } });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        location.href = 'login.html?next=' + encodeURIComponent('inbox.html');
+        return;
+      }
+      if (!res.ok) {
+        err.hidden = false;
+        err.textContent = data.error || 'دیده نشد';
+        return;
+      }
+      const avg = document.getElementById('avg');
+      const full = Math.max(0, Math.min(5, Math.round(Number(data.avg) || 0)));
+      const marks = `${'★'.repeat(full)}${'☆'.repeat(5 - full)}`;
+      avg.textContent = data.count
+        ? `${marks}  ${data.avg} از ۵، از ${data.count} نفر`
+        : 'هنوز امتیازی نیست.';
+      document.getElementById('ratings').innerHTML = (data.ratings || []).map((item) => `
+        <article class="review-item">
+          <strong>${esc(stars(item.stars))}</strong>
+          <b>${esc(item.name)}</b>
+          <span class="note">${esc(item.email)} — ${esc(when(item.at))}</span>
+          <p>${esc(item.text) || 'بدون متن'}</p>
+        </article>
+      `).join('') || '<p class="note">نظری ثبت نشده.</p>';
+      document.getElementById('bugs').innerHTML = (data.bugs || []).map((item) => `
+        <article class="review-item">
+          <b>${esc(item.name || 'مهمان')}</b>
+          <span class="note">${esc(item.email)} — ${esc(item.page)} — ${esc(when(item.at))}</span>
+          <p>${esc(item.text)}</p>
+        </article>
+      `).join('') || '<p class="note">گزارش خطایی نیست.</p>';
+    }
+    if (!token()) location.href = 'login.html?next=' + encodeURIComponent('inbox.html');
+    else load();
+  </script>
+</body>
+</html>

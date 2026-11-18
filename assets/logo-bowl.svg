@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none" role="img" aria-label="???? ??? ????? ? ???">
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ecfdf5"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </radialGradient>
+    <linearGradient id="bowl" x1="40" y1="70" x2="120" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34d399"/>
+      <stop offset="0.45" stop-color="#10b981"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-10%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#16a34a" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <circle cx="80" cy="80" r="78" fill="url(#halo)"/>
+  <path d="M28 88c3 32 22 48 52 48s49-16 52-48H28z" fill="url(#bowl)" filter="url(#soft)"/>
+  <path d="M32 88c4 8 22 12 48 12s44-4 48-12" fill="#6ee7b7" opacity="0.55"/>
+  <path d="M28 88h104" stroke="#047857" stroke-width="2" stroke-linecap="round" opacity="0.25"/>
+  <g fill="#f8fffb">
+    <rect x="51" y="28" width="3.2" height="18" rx="1.5"/>
+    <rect x="56.4" y="28" width="3.2" height="18" rx="1.5"/>
+    <rect x="61.8" y="28" width="3.2" height="18" rx="1.5"/>
+    <rect x="67.2" y="28" width="3.2" height="18" rx="1.5"/>
+    <rect x="57" y="44" width="8" height="38" rx="3.2"/>
+  </g>
+  <path d="M90 86c10-10 18-22 16-32-10 4-16 14-18 24 6 2 8 5 2 8z" fill="#f8fffb"/>
+  <path d="M86 86c-8-8-14-20-12-30 9 3 14 13 16 22-5 2-7 5-4 8z" fill="#ecfdf5"/>
+</svg>

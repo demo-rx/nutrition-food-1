@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>اسکن غذا | Healthy Nutrition Plan</title>
+  <link rel="icon" type="image/png" href="assets/logo-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Outfit:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/scan.css">
+</head>
+<body data-title-key="html.title.scan">
+  <div class="app-shell">
+    <header class="scan-header">
+      <a href="index.html" class="back-btn" data-i18n-aria="scan.back" aria-label="بازگشت">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="header-title">
+        <span class="fa-text" data-i18n="scan.title">اسکن غذا</span>
+        <span class="en-sub">Food Scan</span>
+      </div>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <div id="lang-switch"></div>
+
+    <main class="scan-main">
+      <section id="step-start" class="step active">
+        <div class="intro-card">
+          <div class="intro-icon">📸</div>
+          <h1 class="fa-text" data-i18n="start.h1">عکس غذات رو بگیر</h1>
+          <p class="fa-text intro-desc" data-i18n="start.desc">با دوربین موبایل عکس بگیر تا کالری، پروتئین، قند و نمک تخمین زده بشه.</p>
+          <p class="en-sub intro-desc-en">Take a photo to estimate calories, protein, sugar &amp; salt.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-open-camera">
+          <span class="fa-text" data-i18n="start.camera">باز کردن دوربین</span>
+          <span class="en-sub">Open Camera</span>
+        </button>
+        <label class="btn btn-secondary file-picker">
+          <input type="file" id="file-input" class="file-input-native" accept="image/*">
+          <span class="fa-text" data-i18n="start.gallery">انتخاب از گالری</span>
+          <span class="en-sub">Choose from Gallery</span>
+        </label>
+      </section>
+
+      <!-- Step 2: Camera -->
+      <section id="step-camera" class="step">
+        <div class="camera-frame">
+          <video id="camera-video" autoplay playsinline muted></video>
+          <canvas id="capture-canvas" hidden></canvas>
+        </div>
+        <p class="camera-hint fa-text" data-i18n="cam.hint">غذا رو وسط کادر قرار بده</p>
+        <p class="camera-hint en-sub">Center your food in the frame</p>
+        <button type="button" class="shutter-btn" id="btn-capture" data-i18n-aria="cam.shutter" aria-label="عکس بگیر"></button>
+      </section>
+
+      <!-- Step 3: Preview -->
+      <section id="step-preview" class="step">
+        <div class="preview-frame">
+          <img id="preview-image" alt="عکس غذا">
+        </div>
+        <div class="preview-actions">
+          <button type="button" class="btn btn-secondary" id="btn-retake">
+            <span class="fa-text" data-i18n="preview.retake">عکس دوباره</span>
+            <span class="en-sub">Retake</span>
+          </button>
+          <button type="button" class="btn btn-primary" id="btn-analyze">
+            <span class="fa-text" data-i18n="preview.continue">ادامه</span>
+            <span class="en-sub">Continue</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Step 3b: Manual — edit AI estimates & confirm -->
+      <section id="step-portion" class="step">
+        <div class="preview-frame preview-frame-sm">
+          <img id="portion-preview-image" alt="عکس غذا">
+        </div>
+
+        <div class="portion-form">
+          <h2 id="portion-dish-name" class="fa-text portion-heading" data-i18n="portion.items">اجزای بشقاب</h2>
+          <p id="portion-dish-name-en" class="en-sub portion-heading-en">Plate items — edit &amp; confirm</p>
+
+          <p class="edit-hint fa-text" data-i18n="portion.hint">تخمین AI — در صورت نیاز ویرایش کنید:</p>
+          <p class="edit-hint en-sub">AI estimates — edit if needed:</p>
+
+          <div id="plate-items-list" class="plate-items-list"></div>
+
+          <button type="button" class="btn btn-secondary btn-add-item" id="btn-add-item">
+            <span class="fa-text" data-i18n="portion.add">+ افزودن جزء</span>
+            <span class="en-sub">+ Add item</span>
+          </button>
+
+          <p id="plate-total-grams" class="plate-total-grams"></p>
+        </div>
+
+        <div class="preview-actions">
+          <button type="button" class="btn btn-secondary" id="btn-portion-back">
+            <span class="fa-text" data-i18n="portion.back">برگشت</span>
+            <span class="en-sub">Back</span>
+          </button>
+          <button type="button" class="btn btn-primary" id="btn-confirm-manual">
+            <span class="fa-text" data-i18n="portion.confirm">تأیید و محاسبه</span>
+            <span class="en-sub">Confirm &amp; Calculate</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Step 4: Loading -->
+      <section id="step-loading" class="step">
+        <div class="loading-card">
+          <div class="spinner"></div>
+          <p class="fa-text" data-i18n="load.estimate">در حال تخمین اجزای بشقاب...</p>
+          <p class="en-sub">Estimating plate items...</p>
+          <div class="load-progress" id="load-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="load-track"><div class="load-bar" id="load-bar"></div></div>
+            <p class="load-pct" id="load-pct">۱٪</p>
+            <p class="load-left fa-text" id="load-left" data-i18n="load.done">انجام شده</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 5: Results -->
+      <section id="step-results" class="step">
+        <div class="result-header">
+          <img id="result-image" alt="">
+          <div>
+            <h2 id="food-name-fa" class="fa-text"></h2>
+            <p id="food-name-en" class="en-sub"></p>
+            <span id="confidence-badge" class="confidence-badge"></span>
+          </div>
+        </div>
+
+        <p id="portion-note" class="portion-note"></p>
+
+        <div id="component-breakdown" class="component-breakdown" hidden></div>
+        <button type="button" class="btn btn-secondary" id="btn-add-scan-item" hidden>
+          <span class="fa-text" data-i18n="scan.addFood">افزودن غذا</span>
+        </button>
+        <div id="scan-notes" class="scan-notes" hidden></div>
+
+        <button type="button" class="btn btn-secondary" id="btn-facts" aria-expanded="false" aria-controls="facts-panel">
+          <span class="fa-text" data-i18n="facts.title">جدول ارزش غذایی</span>
+        </button>
+        <div class="facts-label" id="facts-panel" hidden>
+          <h3 id="facts-title" class="facts-title">
+            <span class="fa-text" data-i18n="facts.title">جدول ارزش غذایی</span>
+            <span class="en-sub">Nutrition Facts</span>
+          </h3>
+          <p id="facts-serving" class="facts-serving"></p>
+          <table class="facts-table">
+            <tbody>
+              <tr class="facts-row-calories">
+                <th scope="row"><span class="fa-text" data-i18n="facts.cal">کالری</span><span class="en-sub">Calories</span></th>
+                <td id="facts-calories">—</td>
+              </tr>
+              <tr>
+                <th scope="row"><span class="fa-text" data-i18n="facts.fat">چربی کل</span><span class="en-sub">Total Fat</span></th>
+                <td id="facts-fat">—</td>
+              </tr>
+              <tr class="facts-indent">
+                <th scope="row"><span class="fa-text" data-i18n="facts.sat">چربی اشباع</span><span class="en-sub">Saturated Fat</span></th>
+                <td id="facts-sat-fat">—</td>
+              </tr>
+              <tr>
+                <th scope="row"><span class="fa-text" data-i18n="facts.carbs">کربوهیدرات</span><span class="en-sub">Carbohydrate</span></th>
+                <td id="facts-carbs">—</td>
+              </tr>
+              <tr class="facts-indent">
+                <th scope="row"><span class="fa-text" data-i18n="facts.fiber">فیبر</span><span class="en-sub">Dietary Fiber</span></th>
+                <td id="facts-fiber">—</td>
+              </tr>
+              <tr class="facts-indent">
+                <th scope="row"><span class="fa-text" data-i18n="facts.sugar">قند</span><span class="en-sub">Total Sugars</span></th>
+                <td id="facts-sugar">—</td>
+              </tr>
+              <tr>
+                <th scope="row"><span class="fa-text" data-i18n="facts.protein">پروتئین</span><span class="en-sub">Protein</span></th>
+                <td id="facts-protein">—</td>
+              </tr>
+              <tr>
+                <th scope="row"><span class="fa-text" data-i18n="facts.salt">نمک</span><span class="en-sub">Salt</span></th>
+                <td id="facts-salt">—</td>
+              </tr>
+              <tr>
+                <th scope="row"><span class="fa-text" data-i18n="facts.sodium">سدیم</span><span class="en-sub">Sodium</span></th>
+                <td id="facts-sodium">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="nutrition-grid">
+          <div class="nutrition-card">
+            <span class="nutrition-icon">🔥</span>
+            <span class="nutrition-value" id="val-calories">—</span>
+            <span class="nutrition-label fa-text" data-i18n="card.cal">کالری</span>
+            <span class="nutrition-label en-sub">Calories</span>
+          </div>
+          <div class="nutrition-card">
+            <span class="nutrition-icon">💪</span>
+            <span class="nutrition-value" id="val-protein">—</span>
+            <span class="nutrition-label fa-text" data-i18n="card.protein">پروتئین (g)</span>
+            <span class="nutrition-label en-sub">Protein (g)</span>
+          </div>
+          <div class="nutrition-card">
+            <span class="nutrition-icon">🍬</span>
+            <span class="nutrition-value" id="val-sugar">—</span>
+            <span class="nutrition-label fa-text" data-i18n="card.sugar">قند (g)</span>
+            <span class="nutrition-label en-sub">Sugar (g)</span>
+          </div>
+          <div class="nutrition-card">
+            <span class="nutrition-icon">🧂</span>
+            <span class="nutrition-value" id="val-salt">—</span>
+            <span class="nutrition-label fa-text" data-i18n="card.salt">نمک (g)</span>
+            <span class="nutrition-label en-sub">Salt (g)</span>
+          </div>
+        </div>
+
+        <div class="save-card">
+          <h3 class="fa-text" data-i18n="save.title">ثبت در پلنر</h3>
+          <p class="fa-text save-hint" data-i18n="save.hint">اول غذا و مقدار را ببین. اگر خواستی، وعده را انتخاب کن و در برنامه بگذار.</p>
+          <div class="slot-picks">
+            <button type="button" class="slot-pick" data-slot="breakfast" data-i18n="slot.breakfast">صبحانه</button>
+            <button type="button" class="slot-pick" data-slot="snackAm" data-i18n="slot.snackAm">میان‌وعده صبح</button>
+            <button type="button" class="slot-pick" data-slot="lunch" data-i18n="slot.lunch">ناهار</button>
+            <button type="button" class="slot-pick" data-slot="snackPm" data-i18n="slot.snackPm">میان‌وعده عصر</button>
+            <button type="button" class="slot-pick" data-slot="dinner" data-i18n="slot.dinner">شام</button>
+            <button type="button" class="slot-pick" data-slot="snackNight" data-i18n="slot.snackNight">میان‌وعده شب</button>
+            <button type="button" class="slot-pick wide" data-slot="now" data-i18n="save.now">الان دارم می‌خورم</button>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-save-meal">
+            <span class="fa-text" data-i18n="save.btn">ثبت در پلنر غذایی</span>
+          </button>
+          <p id="save-status" class="save-status" hidden></p>
+          <a href="plan.html" class="btn btn-secondary" id="link-planner" hidden data-i18n="save.openPlanner">مشاهده پلنر هفتگی</a>
+        </div>
+
+        <a href="reports.html" class="btn btn-secondary" data-i18n="home.reports">گزارش هفتگی و سالانه</a>
+
+        <p class="disclaimer fa-text" data-i18n="disc">⚠️ این مقادیر تخمینی هستند و جایگزین مشاوره پزشکی نیستند.</p>
+        <p class="disclaimer en-sub">Estimates only — not medical advice.</p>
+
+        <button type="button" class="btn btn-primary" id="btn-scan-again">
+          <span class="fa-text" data-i18n="again">اسکن غذای جدید</span>
+          <span class="en-sub">Scan Another Meal</span>
+        </button>
+      </section>
+
+      <p id="error-message" class="error-message" role="alert" hidden></p>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/account.js"></script>
+  <script src="js/gate.js"></script>
+  <script src="js/openrouter-scan.js"></script>
+  <script src="js/scan.js"></script>
+  <script src="js/feedback.js"></script>
+</body>
+</html>

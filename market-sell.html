@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>فروش دستور پخت | Healthy Nutrition Plan</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/platform.css">
+  <link rel="icon" type="image/png" href="/assets/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="bmi-like">
+      <a href="market.html#recipes" class="back">بازگشت</a>
+      <h1>فروش دستور پخت</h1>
+      <span class="header-spacer" aria-hidden="true"></span>
+    </header>
+    <main class="pad">
+      <p class="note">دستور پخت سالم‌ات را با عکس و قیمت بگذار. خریدار با تو تماس می‌گیرد.</p>
+      <form id="market-form" class="price-card">
+        <label>اسم غذا<input id="f-name" required maxlength="80" placeholder="مثلاً عدسی رژیمی"></label>
+        <label>آشپز<input id="f-title" maxlength="80" placeholder="نام خودت"></label>
+        <label>شهر<input id="f-city" maxlength="40"></label>
+        <label>تلفن<input id="f-phone" maxlength="20" dir="ltr"></label>
+        <label>قیمت<input id="f-price" maxlength="80" placeholder="مثلاً ۲۰ هزار تومان"></label>
+        <label>عکس غذا<input id="f-photo" type="file" accept="image/*"></label>
+        <label>چرا سالم است؟<textarea id="f-bio" maxlength="400" rows="4"></textarea></label>
+        <p class="note" id="form-status"></p>
+        <button type="submit" class="btn btn-primary">بگذار برای فروش</button>
+      </form>
+    </main>
+  </div>
+  <script src="js/account.js"></script>
+  <script>
+    if (!HNP.currentUser()?.admin) {
+      location.replace('index.html');
+    }
+    document.getElementById('market-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = document.getElementById('form-status');
+      const user = HNP.currentUser();
+      status.textContent = 'در حال انتشار…';
+      const body = new FormData();
+      body.append('name', document.getElementById('f-name').value);
+      body.append('title', document.getElementById('f-title').value);
+      body.append('city', document.getElementById('f-city').value);
+      body.append('phone', document.getElementById('f-phone').value);
+      body.append('price', document.getElementById('f-price').value);
+      body.append('bio', document.getElementById('f-bio').value);
+      const photo = document.getElementById('f-photo').files[0];
+      if (photo) body.append('photo', photo);
+      const res = await fetch('/api/market/recipes', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + user.token },
+        body,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        status.textContent = data.error || 'ثبت نشد';
+        return;
+      }
+      location.href = 'market.html#recipes';
+    });
+  </script>
+</body>
+</html>
